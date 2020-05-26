@@ -75,9 +75,6 @@
             <x:String x:Key="IconEmployment">&#xf990;</x:String>
             <x:String x:Key="IconAddress">&#xf34d;</x:String>
 
-            
-            <x:Int32 x:Key="CloseButtonBorderWidth">0</x:Int32>
-
             <x:Int32 x:Key="BlogSpan">1</x:Int32>
             <x:Int32 x:Key="VideoSpan">1</x:Int32>
 
@@ -107,12 +104,6 @@
                 <Setter Property="BorderColor" Value="{DynamicResource SystemGray2}" />
                 <Setter Property="BorderThickness" Value="3" />
 
-            </Style>
-
-            <Style x:Key="PickerStyle" TargetType="Picker">
-                <Setter Property="Visual" Value="Material" />
-                <Setter Property="BackgroundColor" Value="{DynamicResource EntryBackgroundColor}" />
-                <Setter Property="TextColor" Value="{DynamicResource SystemGray}" />
             </Style>
 
             <Style x:Key="EntryStyle" TargetType="Entry">
@@ -186,17 +177,6 @@
                 <Setter Property="BorderColor" Value="Transparent" />
                 <Setter Property="Visual" Value="Default" />
                 <Setter Property="BackgroundColor" Value="Transparent" />
-            </Style>
-
-            <Style x:Key="CloseButtonStyle" TargetType="Button">
-                <Setter Property="BackgroundColor" Value="{DynamicResource FrameBackgroundColor}" />
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="BorderColor" Value="{DynamicResource FrameBorderColor}" />
-                <Setter Property="BorderWidth" Value="{DynamicResource CloseButtonBorderWidth}" />
-                <Setter Property="CornerRadius" Value="20" />
-                <Setter Property="HeightRequest" Value="40" />
-                <Setter Property="Visual" Value="Material" />
-                <Setter Property="TextColor" Value="{DynamicResource SystemBlue}" />
             </Style>
 
             <Style x:Key="SubscribeButtonStyle" TargetType="Button">

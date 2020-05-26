@@ -10,7 +10,6 @@
     </PackageReference>
     <PackageReference Include="System.Text.Json" Version="4.7.1" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3" />
-    <PackageReference Include="Xamarin.Forms" Version="4.5.0.617" />
     <PackageReference Include="Xamarin.Forms.Maps">
       <Version>4.5.0.617</Version>
     </PackageReference>
@@ -19,28 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\laconic\src\Laconic.csproj" />
     <ProjectReference Include="..\MyContacts.Shared\MyContacts.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Views\ListPage.xaml.cs">
-      <DependentUpon>ListPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\EditPage.xaml.cs">
-      <DependentUpon>EditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\DetailPage.xaml.cs">
-      <DependentUpon>DetailPage.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Styles\DarkTheme.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Styles\LightTheme.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
