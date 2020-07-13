@@ -1,22 +1,41 @@
 using Laconic;
+using xf = Xamarin.Forms;
 
 namespace MyContacts.Laconic
 {
     class LargeLabel : Label
     {
-        public LargeLabel(State state)
+        public LargeLabel(Visuals visuals)
         {
-            TextColor = state.Colors.SystemGray;
-            FontSize = state.Sizes.Large;
+            TextColor = visuals.Colors.SystemGray;
+            FontSize = visuals.Sizes.Large;
         }
     }
 
     class MediumLabel : Label
     {
-        public MediumLabel(State state)
+        public MediumLabel(Visuals visuals)
         {
-            TextColor = state.Colors.SystemGray;
-            FontSize = state.Sizes.Medium; 
+            TextColor = visuals.Colors.SystemGray;
+            FontSize = visuals.Sizes.Medium; 
+        }
+    }
+
+    class SmallLabel : Label
+    {
+        public SmallLabel(Visuals visuals)
+        {
+            TextColor = visuals.Colors.SystemGray;
+            FontSize = visuals.Sizes.Small; 
+        }
+    }
+
+    class MicroLabel : Label
+    {
+        public MicroLabel(Visuals visuals)
+        {
+            TextColor = visuals.Colors.SystemGray;
+            FontSize = visuals.Sizes.Micro; 
         }
     }
 
@@ -26,8 +45,28 @@ namespace MyContacts.Laconic
         {
             BackgroundColor = colors.FrameBackgroundColor;
             BorderColor = colors.FrameBorderColor;
-            Visual = Xamarin.Forms.VisualMarker.Material;
+            Visual = xf.VisualMarker.Material;
             HasShadow = true;
+        }
+    }
+
+    class PancakeView : Layout<xf.PancakeView.PancakeView>, IContentHost
+    {
+        public View Content { get; set; }
+
+        public xf.CornerRadius CornerRadius
+        {
+            set => SetValue(xf.PancakeView.PancakeView.CornerRadiusProperty, value);
+        }
+
+		public xf.Color BorderColor
+		{
+			set => SetValue(xf.PancakeView.PancakeView.BorderColorProperty, value);
+        }
+
+		public double BorderThickness
+		{
+			set => SetValue(xf.PancakeView.PancakeView.BorderThicknessProperty, value);
         }
     }
 }
