@@ -69,4 +69,14 @@ namespace MyContacts.Laconic
 			set => SetValue(xf.PancakeView.PancakeView.BorderThicknessProperty, value);
         }
     }
+
+	class ImageSource
+	{
+		static string MaterialFontName { get; set; } = xf.Device.RuntimePlatform == xf.Device.iOS
+			? "Material Design Icons"
+			: "materialdesignicons-webfont.ttf#Material Design Icons";
+        
+		public static xf.FontImageSource FromFont(string glyph) => new xf.FontImageSource {
+			FontFamily = MaterialFontName, Glyph = glyph, Color = xf.Color.White };
+	}
 }

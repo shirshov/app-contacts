@@ -78,10 +78,7 @@ namespace MyContacts.Laconic
                 HorizontalOptions = xf.LayoutOptions.FillAndExpand,
                 BackgroundColor = colors.PrimaryColor,
                 VerticalOptions = xf.LayoutOptions.FillAndExpand,
-                Source = new xf.FontImageSource
-                {
-                    FontFamily = "Material Design Icons", Glyph = "\uf415", Color = xf.Color.White
-                }
+                Source = ImageSource.FromFont("\uf415")
             }
         };
 
@@ -95,11 +92,7 @@ namespace MyContacts.Laconic
                 ["settings"] = new ToolbarItem
                 {
                     Clicked = () => new Signal("showSettings"),
-                    IconImageSource = new xf.FontImageSource
-                    {
-						// TODO: Android
-                        FontFamily = "Material Design Icons", Glyph = "\uF493"
-                    }
+                    IconImageSource = ImageSource.FromFont("\uF493")
                 }
             },
             Content = new Grid

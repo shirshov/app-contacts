@@ -35,10 +35,6 @@
     <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
-    <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <BundleAssemblies>false</BundleAssemblies>
     <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidLinkMode>None</AndroidLinkMode>
@@ -78,28 +74,31 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Refractored.MvvmHelpers">
-      <Version>1.6.1-beta</Version>
+      <Version>1.6.2</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>4.7.1</Version>
+      <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Essentials">
-      <Version>1.5.3</Version>
+      <Version>1.5.3.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms">
       <Version>4.7.0.1080</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Maps">
-      <Version>4.5.0.617</Version>
+      <Version>4.7.0.1080</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.PancakeView">
-      <Version>1.3.7</Version>
+      <Version>2.0.0.691</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Visual.Material">
-      <Version>4.5.0.617</Version>
+      <Version>4.7.0.1080</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.Material">
       <Version>1.1.0-rc2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.AppCompat.Resources">
+      <Version>1.1.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
