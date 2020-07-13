@@ -59,12 +59,10 @@
             <Color x:Key="RefreshViewBackgroundColor">White</Color>
 
             <!--  Icons  -->
-            <x:String x:Key="IconSettings">&#xf493;</x:String>
 
             <x:String x:Key="IconSave">&#xf193;</x:String>
             <x:String x:Key="IconEdit">&#xfda5;</x:String>
             <x:String x:Key="IconDelete">&#xf1c0;</x:String>
-            <x:String x:Key="IconAdd">&#xf415;</x:String>
             <x:String x:Key="IconRefresh">&#xf450;</x:String>
             <x:String x:Key="IconDirections">&#xf1d0;</x:String>
             <x:String x:Key="IconPhone">&#xf3f2;</x:String>
@@ -112,14 +110,6 @@
                 <Setter Property="TextColor" Value="{DynamicResource SystemGray}" />
                 <Setter Property="PlaceholderColor" Value="{DynamicResource AccentColor}"/>
             </Style>
-
-            <Style x:Key="SearchBarStyle" TargetType="SearchBar">
-                <Setter Property="Visual" Value="Material" />
-                <Setter Property="BackgroundColor" Value="{DynamicResource SearchBackgroundColor}" />
-                <Setter Property="TextColor" Value="{DynamicResource SearchTextColor}" />
-                <Setter Property="PlaceholderColor" Value="{DynamicResource SearchTextColor}"/>
-            </Style>
-
 
             <Style x:Key="BaseLabelStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="{DynamicResource SystemGray}" />
@@ -196,11 +186,6 @@
                 <Setter Property="WidthRequest" Value="40" />
                 <Setter Property="HeightRequest" Value="40" />
                 <Setter Property="Padding" Value="4" />
-                <Setter Property="Visual" Value="Material" />
-            </Style>
-
-            <Style x:Key="FloatingActionButtonStyle" TargetType="ImageButton">
-                <Setter Property="BackgroundColor" Value="{DynamicResource FabBackgroundColor}" />
                 <Setter Property="Visual" Value="Material" />
             </Style>
         </ResourceDictionary>
