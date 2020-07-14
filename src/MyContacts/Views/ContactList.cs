@@ -15,27 +15,33 @@ namespace MyContacts.Laconic
             HasShadow = true,
             BackgroundColor = visuals.Colors.FrameBackgroundColor,
             BorderColor = visuals.Colors.FrameBorderColor,
-            GestureRecognizers = { ["tap"] = new TapGestureRecognizer { Tapped = () => new Signal("showDetails", contact) } },
-            Content = new Grid {
+            GestureRecognizers
+                = {["tap"] = new TapGestureRecognizer {Tapped = () => new Signal("showDetails", contact)}},
+            Content = new Grid
+            {
                 ColumnSpacing = 12,
                 ColumnDefinitions = "100, *",
-                ["photo"] = new PancakeView {
-				    CornerRadius = new xf.CornerRadius(40, 15, 15, 40),
-				    HeightRequest = 100,
-				    HorizontalOptions = xf.LayoutOptions.Center,
-				    IsClippedToBounds = true,
-				    BackgroundColor = visuals.Colors.FrameBackgroundColor,
-				    BorderColor = visuals.Colors.SystemGray2,
-				    BorderThickness = 3,
-				    VerticalOptions = xf.LayoutOptions.Center,
-				    WidthRequest = 100,
-				    Content = new Image {Aspect = xf.Aspect.AspectFill, Source = contact.SmallPhotoUrl}
-			    },
-                ["text", column: 1] = new StackLayout {
+                ["photo"] =
+                    new PancakeView
+                    {
+                        CornerRadius = new xf.CornerRadius(40, 15, 15, 40),
+                        HeightRequest = 100,
+                        HorizontalOptions = xf.LayoutOptions.Center,
+                        IsClippedToBounds = true,
+                        BackgroundColor = visuals.Colors.FrameBackgroundColor,
+                        BorderColor = visuals.Colors.SystemGray2,
+                        BorderThickness = 3,
+                        VerticalOptions = xf.LayoutOptions.Center,
+                        WidthRequest = 100,
+                        Content = new Image {Aspect = xf.Aspect.AspectFill, Source = contact.SmallPhotoUrl}
+                    },
+                ["text", column: 1] = new StackLayout
+                {
                     VerticalOptions = xf.LayoutOptions.Center,
                     ["firstName"] = new LargeLabel(visuals) {Text = contact.DisplayLastNameFirst},
                     ["company"] = new SmallLabel(visuals) {Text = contact.Company},
-                    ["jobTitle"] = new MicroLabel(visuals) { Text = contact.JobTitle, TextColor = visuals.Colors.AccentColor},
+                    ["jobTitle"] =
+                        new MicroLabel(visuals) {Text = contact.JobTitle, TextColor = visuals.Colors.AccentColor},
                 },
             }
         };

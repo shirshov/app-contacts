@@ -33,12 +33,12 @@ namespace MyContacts
 
         readonly Binder<State> _binder;
 
-		static (double, double, double, double) GetNamedSizes() => (
-			xf.Device.GetNamedSize(xf.NamedSize.Large, typeof(Label)),
-			xf.Device.GetNamedSize(xf.NamedSize.Medium, typeof(Label)),
-			xf.Device.GetNamedSize(xf.NamedSize.Small, typeof(Label)),
-			xf.Device.GetNamedSize(xf.NamedSize.Micro, typeof(Label))
-		);
+        static (double, double, double, double) GetNamedSizes() => (
+            xf.Device.GetNamedSize(xf.NamedSize.Large, typeof(Label)),
+            xf.Device.GetNamedSize(xf.NamedSize.Medium, typeof(Label)),
+            xf.Device.GetNamedSize(xf.NamedSize.Small, typeof(Label)),
+            xf.Device.GetNamedSize(xf.NamedSize.Micro, typeof(Label))
+        );
 
         public App()
         {
@@ -54,7 +54,7 @@ namespace MyContacts
             var (themes, selectedTheme) = GetThemeList();
             _binder = Binder.Create(
                 new State(
-					false,
+                    false,
                     new Contact[0],
                     new Visuals(new Colors(Resources), GetNamedSizes(), themes, selectedTheme)
                 ),
@@ -63,24 +63,26 @@ namespace MyContacts
 
             var listPage = _binder.CreatePage(ContactList.Page);
             xf.NavigationPage.SetBackButtonTitle(listPage, "List");
-            var navPage = new xf.NavigationPage(listPage) { BarTextColor = xf.Color.White };
+            var navPage = new xf.NavigationPage(listPage) {BarTextColor = xf.Color.White};
             navPage.SetDynamicResource(xf.NavigationPage.BarBackgroundColorProperty, "PrimaryColor");
 
             // Navigation
-			_binder.UseMiddleware((context, next) => {
-			    Action action = context.Signal switch {
+            _binder.UseMiddleware((context, next) =>
+            {
+                Action action = context.Signal switch
+                {
                     ("showSettings", _) => () => navPage.Navigation.PushModalAsync(new SettingsPage(_binder)),
                     ("closeSettings", _) => () => navPage.Navigation.PopModalAsync(),
-				    ("addContact", _) => () => navPage.Navigation.PushAsync(new EditPage()),
-				    ("showDetails", Contact c) => () => navPage.Navigation.PushAsync(new DetailPage(c)),
-					_ => () => {}
-				};
+                    ("addContact", _) => () => navPage.Navigation.PushAsync(new EditPage()),
+                    ("showDetails", Contact c) => () => navPage.Navigation.PushAsync(new DetailPage(c)),
+                    _ => () => { }
+                };
                 action();
                 return next(context);
-			});
-            
+            });
+
             // Data retrieval
-            _binder.UseMiddleware((context, next) => 
+            _binder.UseMiddleware((context, next) =>
             {
                 if (context.Signal is DataRequested & !context.State.IsFetchingData)
                 {
@@ -92,6 +94,7 @@ namespace MyContacts
                         xf.Device.BeginInvokeOnMainThread(() => _binder.Dispatch(new DataReceived(items)));
                     });
                 }
+
                 return next(context);
             });
 
@@ -102,13 +105,13 @@ namespace MyContacts
 
                 if (context.Signal is SetThemeSignal t)
                 {
-                     var newTheme = context.State.Visuals.Themes.Length == 3 ? t.Payload : t.Payload + 1;
-                     Settings.ThemeOption = newTheme;
+                    var newTheme = context.State.Visuals.Themes.Length == 3 ? t.Payload : t.Payload + 1;
+                    Settings.ThemeOption = newTheme;
                     ThemeHelper.ChangeTheme(t.Payload);
 
                     return context.WithState(
                         new State(
-							context.State.IsFetchingData,
+                            context.State.IsFetchingData,
                             context.State.Contacts,
                             new Visuals(new Colors(Resources), GetNamedSizes(), context.State.Visuals.Themes, newTheme)
                         )
@@ -119,7 +122,7 @@ namespace MyContacts
             });
 
             MainPage = navPage;
-			_binder.Dispatch(new DataRequested());
+            _binder.Dispatch(new DataRequested());
         }
 
         protected override void OnStart()

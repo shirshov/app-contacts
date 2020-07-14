@@ -71,24 +71,25 @@ namespace MyContacts.Laconic
 
     public class State
     {
-		public readonly bool IsFetchingData;
+        public readonly bool IsFetchingData;
         public readonly Contact[] Contacts;
         public readonly Visuals Visuals;
-        
+
         public State(bool isFetchingData, Contact[] contacts, Visuals visuals)
         {
-			IsFetchingData = isFetchingData;
+            IsFetchingData = isFetchingData;
             Contacts = contacts;
             Visuals = visuals;
         }
 
-        public static State MainReducer(State state, Signal signal) => signal switch {
-			DataRequested _ => new State(true, state.Contacts, state.Visuals),
-		    DataReceived rec => new State(false, rec.Payload.ToArray(), state.Visuals),
-		    _ => state,
-		};
+        public static State MainReducer(State state, Signal signal) => signal switch
+        {
+            DataRequested _ => new State(true, state.Contacts, state.Visuals),
+            DataReceived rec => new State(false, rec.Payload.ToArray(), state.Visuals),
+            _ => state,
+        };
     }
-    
+
     class SetThemeSignal : Signal<Theme>
     {
         public SetThemeSignal(Theme theme) : base(theme)
@@ -96,12 +97,14 @@ namespace MyContacts.Laconic
         }
     }
 
-	class DataRequested : Signal
+    class DataRequested : Signal
     {
-		public DataRequested() : base(null) {}
+        public DataRequested() : base(null)
+        {
+        }
     }
 
-	class DataReceived : Signal<IEnumerable<Contact>>
+    class DataReceived : Signal<IEnumerable<Contact>>
     {
         public DataReceived(IEnumerable<Contact> payload) : base(payload)
         {

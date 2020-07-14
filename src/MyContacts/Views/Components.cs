@@ -17,7 +17,7 @@ namespace MyContacts.Laconic
         public MediumLabel(Visuals visuals)
         {
             TextColor = visuals.Colors.SystemGray;
-            FontSize = visuals.Sizes.Medium; 
+            FontSize = visuals.Sizes.Medium;
         }
     }
 
@@ -26,7 +26,7 @@ namespace MyContacts.Laconic
         public SmallLabel(Visuals visuals)
         {
             TextColor = visuals.Colors.SystemGray;
-            FontSize = visuals.Sizes.Small; 
+            FontSize = visuals.Sizes.Small;
         }
     }
 
@@ -35,7 +35,7 @@ namespace MyContacts.Laconic
         public MicroLabel(Visuals visuals)
         {
             TextColor = visuals.Colors.SystemGray;
-            FontSize = visuals.Sizes.Micro; 
+            FontSize = visuals.Sizes.Micro;
         }
     }
 
@@ -59,24 +59,24 @@ namespace MyContacts.Laconic
             set => SetValue(xf.PancakeView.PancakeView.CornerRadiusProperty, value);
         }
 
-		public xf.Color BorderColor
-		{
-			set => SetValue(xf.PancakeView.PancakeView.BorderColorProperty, value);
+        public xf.Color BorderColor
+        {
+            set => SetValue(xf.PancakeView.PancakeView.BorderColorProperty, value);
         }
 
-		public double BorderThickness
-		{
-			set => SetValue(xf.PancakeView.PancakeView.BorderThicknessProperty, value);
+        public double BorderThickness
+        {
+            set => SetValue(xf.PancakeView.PancakeView.BorderThicknessProperty, value);
         }
     }
 
-	class ImageSource
-	{
-		static string MaterialFontName { get; set; } = xf.Device.RuntimePlatform == xf.Device.iOS
-			? "Material Design Icons"
-			: "materialdesignicons-webfont.ttf#Material Design Icons";
-        
-		public static xf.FontImageSource FromFont(string glyph) => new xf.FontImageSource {
-			FontFamily = MaterialFontName, Glyph = glyph, Color = xf.Color.White };
-	}
+    class ImageSource
+    {
+        static string MaterialFontName { get; set; } = xf.Device.RuntimePlatform == xf.Device.iOS
+            ? "Material Design Icons"
+            : "materialdesignicons-webfont.ttf#Material Design Icons";
+
+        public static xf.FontImageSource FromFont(string glyph) =>
+            new xf.FontImageSource {FontFamily = MaterialFontName, Glyph = glyph, Color = xf.Color.White};
+    }
 }
