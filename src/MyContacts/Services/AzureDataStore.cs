@@ -95,8 +95,7 @@ namespace MyContacts.Services
             var serializedContact = JsonSerializer.Serialize(contact);
 
 #if LOCALWRITES
-            contact.Id = Guid.NewGuid().ToString();
-            contacts.Add(contact);
+            contacts.Add(contact.With(id: Guid.NewGuid().ToString()));
 
             await Dialogs.Alert(new AlertInfo
             {
@@ -119,7 +118,7 @@ namespace MyContacts.Services
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var c = JsonSerializer.Deserialize<Contact>(json);
-                contact.Id = c.Id;
+                contact = contact.With(id: c.Id);
                 return true;
             }
 
@@ -138,8 +137,6 @@ namespace MyContacts.Services
             var existing = contacts.FirstOrDefault(c => c.Id == contact.Id);
             if (existing == null)
                 return false;
-
-            contact.CopyData(existing);
 
             await LocalOnlyModeAlert();
 

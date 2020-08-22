@@ -10,6 +10,8 @@ using MyContacts.Shared.Models;
 using MyContacts.Styles;
 using MyContacts.Util;
 using MyContacts.Views;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using xf = Xamarin.Forms;
 
 [assembly: xf.Xaml.XamlCompilation(xf.Xaml.XamlCompilationOptions.Compile)]
@@ -31,9 +33,9 @@ namespace MyContacts
             return (list.ToArray(), (Theme) (list.Count == 3 ? savedThemeIndex : savedThemeIndex - 1));
         }
 
-        readonly Binder<State> _binder;
+        internal readonly Binder<State> _binder;
 
-        static (double, double, double, double) GetNamedSizes() => (
+        static NamedSizes GetNamedSizes() => new NamedSizes(
             xf.Device.GetNamedSize(xf.NamedSize.Large, typeof(Label)),
             xf.Device.GetNamedSize(xf.NamedSize.Medium, typeof(Label)),
             xf.Device.GetNamedSize(xf.NamedSize.Small, typeof(Label)),
@@ -61,7 +63,7 @@ namespace MyContacts
                 State.MainReducer
             );
 
-            var listPage = _binder.CreatePage(ContactList.Page);
+            var listPage = _binder.CreateElement(ContactList.Page);
             xf.NavigationPage.SetBackButtonTitle(listPage, "List");
             var navPage = new xf.NavigationPage(listPage) {BarTextColor = xf.Color.White};
             navPage.SetDynamicResource(xf.NavigationPage.BarBackgroundColorProperty, "PrimaryColor");
@@ -71,30 +73,50 @@ namespace MyContacts
             {
                 Action action = context.Signal switch
                 {
-                    ("showSettings", _) => () => navPage.Navigation.PushModalAsync(new SettingsPage(_binder)),
+                    ("showSettings", _) => () =>
+                    {
+                        var page = _binder.CreateElement(s => SettingsEditor.Page(s.Visuals));
+                        page.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
+                        page.SetDynamicResource(xf.Page.BackgroundColorProperty, nameof(Colors.WindowBackgroundColor));
+                        navPage.Navigation.PushModalAsync(page);
+                    },
                     ("closeSettings", _) => () => navPage.Navigation.PopModalAsync(),
-                    ("addContact", _) => () => navPage.Navigation.PushAsync(new EditPage()),
+                    ("showAddContact", _) => () => 
+                        navPage.Navigation.PushAsync(_binder.CreateElement(s => ContactEditor.Page(s.Visuals, Contact.New()))),
                     ("showDetails", Contact c) => () => navPage.Navigation.PushAsync(new DetailPage(c)),
+                    SaveContact sc => () => navPage.Navigation.PopAsync(),
                     _ => () => { }
                 };
-                action();
+                // Middleware runs on background thread. Since we're creating and pushing new Xamarin.Forms ContentPages
+                // we must dispatch to the main thread:
+                xf.Device.BeginInvokeOnMainThread(action);
                 return next(context);
             });
 
-            // Data retrieval
+            // Data retrieval and update
             _binder.UseMiddleware((context, next) =>
             {
+                var svc = xf.DependencyService.Get<IDataSource<Contact>>();
                 if (context.Signal is DataRequested & !context.State.IsFetchingData)
                 {
                     Task.Run(async () =>
                     {
-                        var svc = xf.DependencyService.Get<IDataSource<Contact>>();
                         await Task.Delay(1000);
                         var items = await svc.GetItems();
-                        xf.Device.BeginInvokeOnMainThread(() => _binder.Dispatch(new DataReceived(items)));
+                        _binder.Send(new DataReceived(items));
                     });
                 }
-
+                else if (context.Signal is SaveContact save)
+                {
+                    Task.Run(async () =>
+                    {
+                        var success = string.IsNullOrEmpty(save.Contact.Id)
+                            ? await svc.AddItem(save.Contact)
+                            : await svc.UpdateItem(save.Contact);
+                        _binder.Send(success ? new DataRequested() : new Signal("SaveError", save.Payload));
+                    });
+                }
+                
                 return next(context);
             });
 
@@ -103,26 +125,24 @@ namespace MyContacts
             {
                 context = next(context);
 
-                if (context.Signal is SetThemeSignal t)
+                if (context.Signal is SetTheme t)
                 {
-                    var newTheme = context.State.Visuals.Themes.Length == 3 ? t.Payload : t.Payload + 1;
-                    Settings.ThemeOption = newTheme;
-                    ThemeHelper.ChangeTheme(t.Payload);
-
-                    return context.WithState(
-                        new State(
-                            context.State.IsFetchingData,
-                            context.State.Contacts,
-                            new Visuals(new Colors(Resources), GetNamedSizes(), context.State.Visuals.Themes, newTheme)
-                        )
-                    );
+                    xf.Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var newTheme = context.State.Visuals.Themes.Length == 3 ? t.Theme : t.Theme + 1;
+                        Settings.ThemeOption = newTheme;
+                        ThemeHelper.ChangeTheme(newTheme);
+                        var colors = new Colors(Resources);
+                        System.Diagnostics.Debug.WriteLine($"THEME UPDATED: {colors.FrameBackgroundColor}");
+                        _binder.Send(new ThemeUpdated(newTheme, new Colors(Resources), GetNamedSizes()));
+                    });
                 }
 
                 return context;
             });
 
             MainPage = navPage;
-            _binder.Dispatch(new DataRequested());
+            _binder.Send(new DataRequested());
         }
 
         protected override void OnStart()

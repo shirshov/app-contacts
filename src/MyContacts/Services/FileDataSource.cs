@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using MyContacts.Interfaces;
-using MyContacts.Models;
-using MyContacts.Services;
 using MyContacts.Shared.Models;
 using MyContacts.Shared.Utils;
 using MyContacts.Util;
+using Newtonsoft.Json;
 using Xamarin.Essentials;
-using Xamarin.Forms;
 
 namespace MyContacts.Services
 {
@@ -47,7 +44,7 @@ namespace MyContacts.Services
 
 		public Task<bool> AddItem(Contact item)
 		{
-			myContacts.Add(item);
+			myContacts.Add(item.With(id: Guid.NewGuid().ToString()));
 
             WriteFile();
 
@@ -84,7 +81,7 @@ namespace MyContacts.Services
 
         void WriteFile()
         {
-            var contents = JsonSerializer.Serialize(myContacts);
+            var contents = JsonConvert.SerializeObject(myContacts);
             File.WriteAllText(fullPath, contents);
             Settings.LastUpdate = DateTime.UtcNow;
         }
@@ -109,7 +106,7 @@ namespace MyContacts.Services
             }
 			else
 			{
-				myContacts = JsonSerializer.Deserialize<List<Contact>>(contents);
+				myContacts = JsonConvert.DeserializeObject<List<Contact>>(contents);
 			}
 
 			isInitialized = true;

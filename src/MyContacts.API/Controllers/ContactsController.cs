@@ -76,7 +76,7 @@ namespace MyContacts.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Contact>> PostContact([FromBody]Contact contact)
         {
-            contact.Id = Guid.NewGuid().ToString();
+            contact = contact.With(id: Guid.NewGuid().ToString());
             context.Contacts.Add(contact);
             try
             {

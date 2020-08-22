@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Laconic;
+using Laconic.CodeGeneration;
 using MyContacts.Models;
 using MyContacts.Shared.Models;
 using xf = Xamarin.Forms;
@@ -53,61 +54,31 @@ namespace MyContacts.Laconic
         }
     }
 
-    public class Visuals
+    [Signals]
+    interface __AppContactsSignal
     {
-        public readonly Colors Colors;
-        public readonly (double Large, double Medium, double Small, double Micro) Sizes;
-        public readonly string[] Themes;
-        public readonly Theme SelectedTheme;
-
-        public Visuals(Colors colors, (double, double, double, double) sizes, string[] themes, Theme selectedTheme)
-        {
-            Colors = colors;
-            Sizes = sizes;
-            Themes = themes;
-            SelectedTheme = selectedTheme;
-        }
+        Signal DataRequested();
+        Signal DataReceived(IEnumerable<Contact> contacts);
+        Signal SaveContact(Contact contact);
+        Signal SetTheme(Theme theme);
+        Signal ThemeUpdated(Theme newTheme, Colors colors, NamedSizes namedSizes);
+    } 
+    
+    [Records]
+    public interface Records
+    {
+        record NamedSizes(double large, double medium, double small, double micro);
+        record Visuals(Colors colors,  NamedSizes sizes, string[] themes, Theme selectedTheme);
+        record State(bool isFetchingData, Contact[] contacts, Visuals visuals);
     }
 
-    public class State
+    partial class State
     {
-        public readonly bool IsFetchingData;
-        public readonly Contact[] Contacts;
-        public readonly Visuals Visuals;
-
-        public State(bool isFetchingData, Contact[] contacts, Visuals visuals)
-        {
-            IsFetchingData = isFetchingData;
-            Contacts = contacts;
-            Visuals = visuals;
-        }
-
-        public static State MainReducer(State state, Signal signal) => signal switch
-        {
-            DataRequested _ => new State(true, state.Contacts, state.Visuals),
-            DataReceived rec => new State(false, rec.Payload.ToArray(), state.Visuals),
+        public static State MainReducer(State state, Signal signal) => signal switch {
+            DataRequested _ => state.With(isFetchingData: true),
+            DataReceived rec => state.With(isFetchingData: false, contacts: rec.Contacts.ToArray()),
+            ThemeUpdated tu => state.With(visuals: state.Visuals.With(colors: tu.Colors, sizes: tu.NamedSizes)),
             _ => state,
         };
-    }
-
-    class SetThemeSignal : Signal<Theme>
-    {
-        public SetThemeSignal(Theme theme) : base(theme)
-        {
-        }
-    }
-
-    class DataRequested : Signal
-    {
-        public DataRequested() : base(null)
-        {
-        }
-    }
-
-    class DataReceived : Signal<IEnumerable<Contact>>
-    {
-        public DataReceived(IEnumerable<Contact> payload) : base(payload)
-        {
-        }
     }
 }

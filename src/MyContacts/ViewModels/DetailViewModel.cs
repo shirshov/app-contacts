@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MyContacts.Constants;
-using MyContacts.Models;
-using MyContacts.Services;
-using MyContacts.Views;
 using MvvmHelpers.Commands;
-using Command = Xamarin.Forms.Command;
+using MyContacts.Laconic;
 using MyContacts.Shared.Models;
 using MyContacts.Utils;
+using Xamarin.Forms;
 
 namespace MyContacts.ViewModels
 {
@@ -36,7 +33,7 @@ namespace MyContacts.ViewModels
         public AsyncCommand EditCommand =>
             editCommand ??= new AsyncCommand(ExecuteEditCommand);
 
-        Task ExecuteEditCommand() => PushAsync(new EditPage(Contact));
+        Task ExecuteEditCommand() => PushAsync((Application.Current as App)._binder.CreateElement(s => ContactEditor.Page(s.Visuals, Contact)));
 
         AsyncCommand deleteCommand;
 

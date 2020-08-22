@@ -185,3 +185,6 @@ FakesAssemblies/
 **/Android/**/[Rr]esource.[Dd]esigner.cs
 
 .idea/
+
+.fake
+.ionide

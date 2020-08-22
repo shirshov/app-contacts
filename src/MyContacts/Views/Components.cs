@@ -50,6 +50,17 @@ namespace MyContacts.Laconic
         }
     }
 
+    class StyledEntry : Entry
+    {
+        public StyledEntry(Colors colors)
+        {
+            Visual = xf.VisualMarker.Material;
+            BackgroundColor = colors.EntryBackgroundColor;
+            TextColor = colors.SystemGray;
+            PlaceholderColor = colors.AccentColor;
+        }
+    }
+    
     class PancakeView : Layout<xf.PancakeView.PancakeView>, IContentHost
     {
         public View Content { get; set; }
@@ -70,13 +81,13 @@ namespace MyContacts.Laconic
         }
     }
 
-    class ImageSource
+    static class ImageSource
     {
-        static string MaterialFontName { get; set; } = xf.Device.RuntimePlatform == xf.Device.iOS
+        static string MaterialFontName { get; } = xf.Device.RuntimePlatform == xf.Device.iOS
             ? "Material Design Icons"
             : "materialdesignicons-webfont.ttf#Material Design Icons";
 
-        public static xf.FontImageSource FromFont(string glyph) =>
-            new xf.FontImageSource {FontFamily = MaterialFontName, Glyph = glyph, Color = xf.Color.White};
+        public static xf.FontImageSource FromFont(string glyph, xf.Color color) =>
+            new xf.FontImageSource {FontFamily = MaterialFontName, Glyph = glyph, Color = color};
     }
 }

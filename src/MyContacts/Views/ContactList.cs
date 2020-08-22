@@ -1,12 +1,12 @@
-﻿using System;
-using MyContacts.Shared.Models;
+﻿using MyContacts.Shared.Models;
 using Laconic;
 using System.Collections.Generic;
+using System.Linq;
 using xf = Xamarin.Forms;
 
 namespace MyContacts.Laconic
 {
-    public partial class ContactList : xf.ContentPage
+    public static class ContactList
     {
         static Frame ContactCard(Contact contact, Visuals visuals) => new StyledFrame(visuals.Colors)
         {
@@ -15,8 +15,10 @@ namespace MyContacts.Laconic
             HasShadow = true,
             BackgroundColor = visuals.Colors.FrameBackgroundColor,
             BorderColor = visuals.Colors.FrameBorderColor,
-            GestureRecognizers
-                = {["tap"] = new TapGestureRecognizer {Tapped = () => new Signal("showDetails", contact)}},
+            GestureRecognizers = {["tap"] = new TapGestureRecognizer
+            {
+                Tapped = () => new Signal("showDetails", contact)
+            }},
             Content = new Grid
             {
                 ColumnSpacing = 12,
@@ -46,11 +48,16 @@ namespace MyContacts.Laconic
             }
         };
 
-        static CollectionView List(IEnumerable<Contact> contacts, Visuals visuals) => new CollectionView
+        static CollectionView List(IEnumerable<Contact> contacts, Visuals visuals)
         {
-            ItemSizingStrategy = xf.ItemSizingStrategy.MeasureFirstItem,
-            Items = contacts.ToItemsList(_ => "contactCard", c => c.Id, c => ContactCard(c, visuals))
-        };
+            System.Diagnostics.Debug.WriteLine($"LIST: {contacts.Count()}");
+            
+            return new CollectionView
+            {
+                ItemSizingStrategy = xf.ItemSizingStrategy.MeasureFirstItem,
+                Items = contacts.ToItemsList(_ => "contactCard", c => c.Id, c => ContactCard(c, visuals))
+            };
+        }
 
         static Frame SearchBar(Colors colors) => new StyledFrame(colors)
         {
@@ -80,11 +87,11 @@ namespace MyContacts.Laconic
             Content = new ImageButton
             {
                 Padding = 12,
-                Clicked = () => new Signal("addContact"),
+                Clicked = () => new Signal("showAddContact"),
                 HorizontalOptions = xf.LayoutOptions.FillAndExpand,
                 BackgroundColor = colors.PrimaryColor,
                 VerticalOptions = xf.LayoutOptions.FillAndExpand,
-                Source = ImageSource.FromFont("\uf415")
+                Source = ImageSource.FromFont("\uf415", xf.Color.White)
             }
         };
 
@@ -92,13 +99,12 @@ namespace MyContacts.Laconic
         {
             Title = "My Contacts",
             BackgroundColor = state.Visuals.Colors.WindowBackgroundColor,
-            Appearing = () => new DataRequested(),
             ToolbarItems =
             {
                 ["settings"] = new ToolbarItem
                 {
                     Clicked = () => new Signal("showSettings"),
-                    IconImageSource = ImageSource.FromFont("\uF493")
+                    IconImageSource = ImageSource.FromFont("\uF493", xf.Color.White)
                 }
             },
             Content = new Grid
@@ -108,7 +114,7 @@ namespace MyContacts.Laconic
                 ["list", row: 1] = new RefreshView
                 {
                     IsRefreshing = state.IsFetchingData,
-                    Refreshing = () => new DataRequested(),
+                    Refreshing = e => e.IsRefreshing ? new DataRequested() : null,
                     Content = List(state.Contacts, state.Visuals),
                     RefreshColor = state.Visuals.Colors.SystemGray
                 },
