@@ -3,6 +3,8 @@ using Laconic;
 using xf = Xamarin.Forms;
 using Picker = Laconic.Picker;
 using ScrollView = Laconic.ScrollView;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace MyContacts.Laconic
 {
@@ -78,6 +80,15 @@ namespace MyContacts.Laconic
             }
         };
 
-        public static ContentPage Page(Visuals visuals) => new ContentPage {Content = MainContent(visuals)};
+        public static VisualElement<xf.ContentPage> Page(Visuals visuals) => Element.WithContext(ctx =>
+        {
+            var page = new ContentPage
+            {
+                BackgroundColor = visuals.Colors.WindowBackgroundColor, Content = MainContent(visuals)
+            };
+            ctx.ViewCreated = p => 
+                ((xf.ContentPage)p).On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
+            return page;
+        });
     }
 }

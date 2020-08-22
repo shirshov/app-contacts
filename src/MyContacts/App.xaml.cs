@@ -10,8 +10,6 @@ using MyContacts.Shared.Models;
 using MyContacts.Styles;
 using MyContacts.Util;
 using MyContacts.Views;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using xf = Xamarin.Forms;
 
 [assembly: xf.Xaml.XamlCompilation(xf.Xaml.XamlCompilationOptions.Compile)]
@@ -74,17 +72,15 @@ namespace MyContacts
                 Action action = context.Signal switch
                 {
                     ("showSettings", _) => () =>
-                    {
-                        var page = _binder.CreateElement(s => SettingsEditor.Page(s.Visuals));
-                        page.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
-                        page.SetDynamicResource(xf.Page.BackgroundColorProperty, nameof(Colors.WindowBackgroundColor));
-                        navPage.Navigation.PushModalAsync(page);
-                    },
-                    ("closeSettings", _) => () => navPage.Navigation.PopModalAsync(),
+                        navPage.Navigation.PushModalAsync(_binder.CreateElement(s => SettingsEditor.Page(s.Visuals))),
+                    ("closeSettings", _) => () => 
+                        navPage.Navigation.PopModalAsync(),
                     ("showAddContact", _) => () => 
                         navPage.Navigation.PushAsync(_binder.CreateElement(s => ContactEditor.Page(s.Visuals, Contact.New()))),
-                    ("showDetails", Contact c) => () => navPage.Navigation.PushAsync(new DetailPage(c)),
-                    SaveContact sc => () => navPage.Navigation.PopAsync(),
+                    ("showDetails", Contact c) => () => 
+                        navPage.Navigation.PushAsync(new DetailPage(c)),
+                    SaveContact sc => () => 
+                        navPage.Navigation.PopAsync(),
                     _ => () => { }
                 };
                 // Middleware runs on background thread. Since we're creating and pushing new Xamarin.Forms ContentPages
