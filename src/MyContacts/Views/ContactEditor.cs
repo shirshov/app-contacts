@@ -1,7 +1,6 @@
 ﻿using System;
 using Laconic;
 using MyContacts.Shared.Models;
-using xf = Xamarin.Forms;
 
 namespace MyContacts.Laconic
 {
@@ -26,10 +25,14 @@ namespace MyContacts.Laconic
                         "image" + i,
                         new Image
                         {
-                            Source = ImageSource.FromFont(row.IconGlyph, visuals.Colors.SystemGray2),
+                            Source = new FontImageSource {
+                                FontFamily = IconFont.Name, 
+                                Glyph = row.IconGlyph, 
+                                Color = visuals.Colors.SystemGray2
+                            },
                             HeightRequest = 36,
                             WidthRequest = 36,
-                            VerticalOptions = xf.LayoutOptions.Center
+                            VerticalOptions = LayoutOptions.Center
                         },
                         row: i + 1);
                 }
@@ -39,7 +42,7 @@ namespace MyContacts.Laconic
                     new StyledEntry(visuals.Colors)
                     {
                         Text = row.Text,
-                        Keyboard = xf.Keyboard.Text,
+                        Keyboard = Keyboard.Text,
                         Placeholder = row.Placeholder,
                         TextChanged = e => row.Update(e.NewTextValue)
                     },
@@ -51,7 +54,7 @@ namespace MyContacts.Laconic
             return grid;
         }
 
-        public static VisualElement<xf.ContentPage> Page(Visuals visuals, Contact initial) => Element.WithContext(ctx => {
+        public static VisualElement<Xamarin.Forms.ContentPage> Page(Visuals visuals, Contact initial) => Element.WithContext(ctx => {
             var (state, setter) = ctx.UseLocalState(initial);
             
             return new ContentPage
@@ -62,7 +65,12 @@ namespace MyContacts.Laconic
                 {
                     ["save"] = new ToolbarItem
                     {
-                        IconImageSource = ImageSource.FromFont("\uf193", xf.Color.White),
+                        IconImageSource = new FontImageSource
+                        {
+                            FontFamily = IconFont.Name,
+                            Glyph = "\uf193", 
+                            Color = Color.White   
+                        },
                         Clicked = () => new SaveContact(state)
                     }
                 },

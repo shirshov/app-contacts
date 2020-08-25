@@ -2,7 +2,6 @@
 using Laconic;
 using System.Collections.Generic;
 using System.Linq;
-using xf = Xamarin.Forms;
 
 namespace MyContacts.Laconic
 {
@@ -10,8 +9,8 @@ namespace MyContacts.Laconic
     {
         static Frame ContactCard(Contact contact, Visuals visuals) => new StyledFrame(visuals.Colors)
         {
-            Margin = new xf.Thickness(12, 6),
-            Visual = xf.VisualMarker.Material,
+            Margin = (12, 6),
+            Visual = VisualMarker.Material,
             HasShadow = true,
             BackgroundColor = visuals.Colors.FrameBackgroundColor,
             BorderColor = visuals.Colors.FrameBorderColor,
@@ -26,20 +25,20 @@ namespace MyContacts.Laconic
                 ["photo"] =
                     new PancakeView
                     {
-                        CornerRadius = new xf.CornerRadius(40, 15, 15, 40),
+                        CornerRadius = (40, 15, 15, 40),
                         HeightRequest = 100,
-                        HorizontalOptions = xf.LayoutOptions.Center,
+                        HorizontalOptions = LayoutOptions.Center,
                         IsClippedToBounds = true,
                         BackgroundColor = visuals.Colors.FrameBackgroundColor,
                         BorderColor = visuals.Colors.SystemGray2,
                         BorderThickness = 3,
-                        VerticalOptions = xf.LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center,
                         WidthRequest = 100,
-                        Content = new Image {Aspect = xf.Aspect.AspectFill, Source = contact.SmallPhotoUrl}
+                        Content = new Image {Aspect = Aspect.AspectFill, Source = contact.SmallPhotoUrl}
                     },
                 ["text", column: 1] = new StackLayout
                 {
-                    VerticalOptions = xf.LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
                     ["firstName"] = new LargeLabel(visuals) {Text = contact.DisplayLastNameFirst},
                     ["company"] = new SmallLabel(visuals) {Text = contact.Company},
                     ["jobTitle"] =
@@ -54,14 +53,14 @@ namespace MyContacts.Laconic
             
             return new CollectionView
             {
-                ItemSizingStrategy = xf.ItemSizingStrategy.MeasureFirstItem,
+                ItemSizingStrategy = ItemSizingStrategy.MeasureFirstItem,
                 Items = contacts.ToItemsList(_ => "contactCard", c => c.Id, c => ContactCard(c, visuals))
             };
         }
 
         static Frame SearchBar(Colors colors) => new StyledFrame(colors)
         {
-            Margin = new xf.Thickness(12, 12, 12, 0),
+            Margin = (12, 12, 12, 0),
             Padding = 0,
             Content = new SearchBar
             {
@@ -80,18 +79,18 @@ namespace MyContacts.Laconic
             CornerRadius = 28,
             HasShadow = true,
             HeightRequest = 56,
-            HorizontalOptions = xf.LayoutOptions.End,
+            HorizontalOptions = LayoutOptions.End,
             BackgroundColor = colors.PrimaryColor,
-            VerticalOptions = xf.LayoutOptions.End,
+            VerticalOptions = LayoutOptions.End,
             WidthRequest = 56,
             Content = new ImageButton
             {
                 Padding = 12,
                 Clicked = () => new Signal("showAddContact"),
-                HorizontalOptions = xf.LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
                 BackgroundColor = colors.PrimaryColor,
-                VerticalOptions = xf.LayoutOptions.FillAndExpand,
-                Source = ImageSource.FromFont("\uf415", xf.Color.White)
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Source = new FontImageSource { FontFamily = IconFont.Name, Glyph = "\uf415", Color = Color.White}
             }
         };
 
@@ -104,7 +103,7 @@ namespace MyContacts.Laconic
                 ["settings"] = new ToolbarItem
                 {
                     Clicked = () => new Signal("showSettings"),
-                    IconImageSource = ImageSource.FromFont("\uF493", xf.Color.White)
+                    IconImageSource = new FontImageSource { FontFamily = IconFont.Name, Glyph = "\uF493", Color = Color.White}
                 }
             },
             Content = new Grid

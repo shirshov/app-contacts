@@ -1,5 +1,5 @@
 using Laconic;
-using xf = Xamarin.Forms;
+using pv = Xamarin.Forms.PancakeView;
 
 namespace MyContacts.Laconic
 {
@@ -45,7 +45,7 @@ namespace MyContacts.Laconic
         {
             BackgroundColor = colors.FrameBackgroundColor;
             BorderColor = colors.FrameBorderColor;
-            Visual = xf.VisualMarker.Material;
+            Visual = VisualMarker.Material;
             HasShadow = true;
         }
     }
@@ -54,40 +54,37 @@ namespace MyContacts.Laconic
     {
         public StyledEntry(Colors colors)
         {
-            Visual = xf.VisualMarker.Material;
+            Visual = VisualMarker.Material;
             BackgroundColor = colors.EntryBackgroundColor;
             TextColor = colors.SystemGray;
             PlaceholderColor = colors.AccentColor;
         }
     }
     
-    class PancakeView : Layout<xf.PancakeView.PancakeView>, IContentHost
+    class PancakeView : Layout<Xamarin.Forms.PancakeView.PancakeView>, IContentHost
     {
         public View Content { get; set; }
 
-        public xf.CornerRadius CornerRadius
+        public CornerRadius CornerRadius
         {
-            set => SetValue(xf.PancakeView.PancakeView.CornerRadiusProperty, value);
+            set => SetValue(pv.PancakeView.CornerRadiusProperty, value);
         }
 
-        public xf.Color BorderColor
+        public Color BorderColor
         {
-            set => SetValue(xf.PancakeView.PancakeView.BorderColorProperty, value);
+            set => SetValue(pv.PancakeView.BorderColorProperty, value);
         }
 
         public double BorderThickness
         {
-            set => SetValue(xf.PancakeView.PancakeView.BorderThicknessProperty, value);
+            set => SetValue(pv.PancakeView.BorderThicknessProperty, value);
         }
     }
 
-    static class ImageSource
+    static class IconFont
     {
-        static string MaterialFontName { get; } = xf.Device.RuntimePlatform == xf.Device.iOS
+        public static string Name { get; } = Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS
             ? "Material Design Icons"
             : "materialdesignicons-webfont.ttf#Material Design Icons";
-
-        public static xf.FontImageSource FromFont(string glyph, xf.Color color) =>
-            new xf.FontImageSource {FontFamily = MaterialFontName, Glyph = glyph, Color = color};
     }
-}
+ }

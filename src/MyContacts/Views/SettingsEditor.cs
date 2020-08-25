@@ -1,18 +1,17 @@
-﻿using MyContacts.Models;
+using MyContacts.Models;
 using Laconic;
-using xf = Xamarin.Forms;
-using Picker = Laconic.Picker;
-using ScrollView = Laconic.ScrollView;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using ScrollView = Laconic.ScrollView;
+using Picker = Laconic.Picker;
 
 namespace MyContacts.Laconic
 {
     public static class SettingsEditor
     {
-        static BoxView ColorRow(xf.Color color) => new BoxView
+        static BoxView ColorRow(Color color) => new BoxView
         {
-            BackgroundColor = color, HeightRequest = 20, HorizontalOptions = xf.LayoutOptions.FillAndExpand
+            BackgroundColor = color, HeightRequest = 20, HorizontalOptions = LayoutOptions.FillAndExpand
         };
 
         static Grid MainContent(Visuals visuals) => new Grid
@@ -23,8 +22,8 @@ namespace MyContacts.Laconic
             {
                 Text = "Settings",
                 Margin = 10,
-                VerticalOptions = xf.LayoutOptions.Center,
-                HorizontalOptions = xf.LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
             },
             ["closeButton", column: 1] = new Button
             {
@@ -37,7 +36,7 @@ namespace MyContacts.Laconic
                 BorderWidth = visuals.SelectedTheme == Theme.Dark ? 2 : 0,
                 CornerRadius = 20,
                 HeightRequest = 40,
-                Visual = xf.VisualMarker.Material,
+                Visual = VisualMarker.Material,
                 TextColor = visuals.Colors.SystemBlue
             },
             ["scrollContainer", row: 1, columnSpan: 2] = new ScrollView
@@ -48,7 +47,7 @@ namespace MyContacts.Laconic
                     Spacing = 10,
                     ["lbl"] = new LargeLabel(visuals)
                     {
-                        Text = "Appearance", VerticalOptions = xf.LayoutOptions.Center,
+                        Text = "Appearance", VerticalOptions = LayoutOptions.Center,
                         BackgroundColor = visuals.Colors.FrameBackgroundColor
                     },
                     ["themeSelector"] = new StyledFrame(visuals.Colors)
@@ -61,7 +60,7 @@ namespace MyContacts.Laconic
                                 Items = visuals.Themes,
                                 SelectedIndex = (int) visuals.SelectedTheme,
                                 SelectedIndexChanged = e => new SetTheme((Theme) e.SelectedIndex),
-                                Visual = xf.VisualMarker.Material,
+                                Visual = VisualMarker.Material,
                                 BackgroundColor = visuals.Colors.EntryBackgroundColor,
                                 TextColor = visuals.Colors.SystemGray
                             }
@@ -80,14 +79,14 @@ namespace MyContacts.Laconic
             }
         };
 
-        public static VisualElement<xf.ContentPage> Page(Visuals visuals) => Element.WithContext(ctx =>
+        public static VisualElement<Xamarin.Forms.ContentPage> Page(Visuals visuals) => Element.WithContext(ctx =>
         {
             var page = new ContentPage
             {
                 BackgroundColor = visuals.Colors.WindowBackgroundColor, Content = MainContent(visuals)
             };
             ctx.ViewCreated = p => 
-                ((xf.ContentPage)p).On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
+                ((Xamarin.Forms.ContentPage)p).On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
             return page;
         });
     }

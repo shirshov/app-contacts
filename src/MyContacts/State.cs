@@ -4,54 +4,55 @@ using Laconic;
 using Laconic.CodeGeneration;
 using MyContacts.Models;
 using MyContacts.Shared.Models;
-using xf = Xamarin.Forms;
 
 namespace MyContacts.Laconic
 {
     public class Colors
     {
-        public readonly xf.Color PrimaryColor;
-        public readonly xf.Color AccentColor;
-        public readonly xf.Color WindowBackgroundColor;
-        public readonly xf.Color EntryBackgroundColor;
-        public readonly xf.Color FrameBackgroundColor;
-        public readonly xf.Color FrameBorderColor;
-        public readonly xf.Color SystemBlue;
-        public readonly xf.Color SystemGray;
-        public readonly xf.Color SystemGray2;
-        public readonly xf.Color SystemGray3;
-        public readonly xf.Color SystemGray4;
-        public readonly xf.Color SystemGreen;
-        public readonly xf.Color SystemIndigo;
-        public readonly xf.Color SystemOrange;
-        public readonly xf.Color SystemPink;
-        public readonly xf.Color SystemPurple;
-        public readonly xf.Color SystemRed;
-        public readonly xf.Color SystemTeal;
-        public readonly xf.Color SystemYellow;
+        public readonly Color PrimaryColor;
+        public readonly Color AccentColor;
+        public readonly Color WindowBackgroundColor;
+        public readonly Color EntryBackgroundColor;
+        public readonly Color FrameBackgroundColor;
+        public readonly Color FrameBorderColor;
+        public readonly Color SystemBlue;
+        public readonly Color SystemGray;
+        public readonly Color SystemGray2;
+        public readonly Color SystemGray3;
+        public readonly Color SystemGray4;
+        public readonly Color SystemGreen;
+        public readonly Color SystemIndigo;
+        public readonly Color SystemOrange;
+        public readonly Color SystemPink;
+        public readonly Color SystemPurple;
+        public readonly Color SystemRed;
+        public readonly Color SystemTeal;
+        public readonly Color SystemYellow;
 
         public Colors(IDictionary<string, object> resourceColors)
         {
-            PrimaryColor = (xf.Color) resourceColors[nameof(PrimaryColor)];
-            AccentColor = (xf.Color) resourceColors[nameof(AccentColor)];
-            WindowBackgroundColor = (xf.Color) resourceColors[nameof(WindowBackgroundColor)];
-            EntryBackgroundColor = (xf.Color) resourceColors[nameof(EntryBackgroundColor)];
-            FrameBackgroundColor = (xf.Color) resourceColors[nameof(FrameBackgroundColor)];
-            FrameBorderColor = (xf.Color) resourceColors[nameof(FrameBorderColor)];
-            SystemBlue = (xf.Color) resourceColors[nameof(SystemBlue)];
-            SystemGray = (xf.Color) resourceColors[nameof(SystemGray)];
-            SystemGray2 = (xf.Color) resourceColors[nameof(SystemGray2)];
-            SystemGray3 = (xf.Color) resourceColors[nameof(SystemGray3)];
-            SystemGray4 = (xf.Color) resourceColors[nameof(SystemGray4)];
-            SystemGreen = (xf.Color) resourceColors[nameof(SystemGreen)];
-            SystemIndigo = (xf.Color) resourceColors[nameof(SystemIndigo)];
-            SystemOrange = (xf.Color) resourceColors[nameof(SystemOrange)];
-            SystemPink = (xf.Color) resourceColors[nameof(SystemPink)];
-            SystemPurple = (xf.Color) resourceColors[nameof(SystemPurple)];
-            SystemRed = (xf.Color) resourceColors[nameof(SystemRed)];
-            SystemTeal = (xf.Color) resourceColors[nameof(SystemTeal)];
-            SystemYellow = (xf.Color) resourceColors[nameof(SystemYellow)];
+            PrimaryColor = FromXamarinFormsColor(resourceColors[nameof(PrimaryColor)]);
+            AccentColor = FromXamarinFormsColor(resourceColors[nameof(AccentColor)]);
+            WindowBackgroundColor = FromXamarinFormsColor(resourceColors[nameof(WindowBackgroundColor)]);
+            EntryBackgroundColor = FromXamarinFormsColor(resourceColors[nameof(EntryBackgroundColor)]);
+            FrameBackgroundColor = FromXamarinFormsColor(resourceColors[nameof(FrameBackgroundColor)]);
+            FrameBorderColor = FromXamarinFormsColor(resourceColors[nameof(FrameBorderColor)]);
+            SystemBlue = FromXamarinFormsColor(resourceColors[nameof(SystemBlue)]);
+            SystemGray = FromXamarinFormsColor(resourceColors[nameof(SystemGray)]);
+            SystemGray2 = FromXamarinFormsColor(resourceColors[nameof(SystemGray2)]);
+            SystemGray3 = FromXamarinFormsColor(resourceColors[nameof(SystemGray3)]);
+            SystemGray4 = FromXamarinFormsColor(resourceColors[nameof(SystemGray4)]);
+            SystemGreen = FromXamarinFormsColor(resourceColors[nameof(SystemGreen)]);
+            SystemIndigo = FromXamarinFormsColor(resourceColors[nameof(SystemIndigo)]);
+            SystemOrange = FromXamarinFormsColor(resourceColors[nameof(SystemOrange)]);
+            SystemPink = FromXamarinFormsColor(resourceColors[nameof(SystemPink)]);
+            SystemPurple = FromXamarinFormsColor(resourceColors[nameof(SystemPurple)]);
+            SystemRed = FromXamarinFormsColor(resourceColors[nameof(SystemRed)]);
+            SystemTeal = FromXamarinFormsColor(resourceColors[nameof(SystemTeal)]);
+            SystemYellow = FromXamarinFormsColor(resourceColors[nameof(SystemYellow)]);
         }
+
+        Color FromXamarinFormsColor(object source) => ((Xamarin.Forms.Color)source).ToHex();
     }
 
     [Signals]
