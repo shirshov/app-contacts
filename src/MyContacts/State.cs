@@ -61,6 +61,7 @@ namespace MyContacts.Laconic
         Signal DataRequested();
         Signal DataReceived(IEnumerable<Contact> contacts);
         Signal SaveContact(Contact contact);
+        Signal DisplayAlert(string title, string message);
         Signal SetTheme(Theme theme);
         Signal ThemeUpdated(Theme newTheme, Colors colors, NamedSizes namedSizes);
     } 

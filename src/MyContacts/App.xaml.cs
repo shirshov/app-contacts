@@ -39,7 +39,7 @@ namespace MyContacts
             xf.Device.GetNamedSize(xf.NamedSize.Small, typeof(Label)),
             xf.Device.GetNamedSize(xf.NamedSize.Micro, typeof(Label))
         );
-
+        
         public App()
         {
             InitializeComponent();
@@ -73,14 +73,13 @@ namespace MyContacts
                 {
                     ("showSettings", _) => () =>
                         navPage.Navigation.PushModalAsync(_binder.CreateElement(s => SettingsEditor.Page(s.Visuals))),
-                    ("closeSettings", _) => () => 
+                    ("closeSettings", _) => () =>
                         navPage.Navigation.PopModalAsync(),
-                    ("showAddContact", _) => () => 
+                    ("showAddContact", _) => () =>
                         navPage.Navigation.PushAsync(_binder.CreateElement(s => ContactEditor.Page(s.Visuals, Contact.New()))),
-                    ("showDetails", Contact c) => () => 
+                    ("showDetails", Contact c) => () =>
                         navPage.Navigation.PushAsync(new DetailPage(c)),
-                    SaveContact sc => () => 
-                        navPage.Navigation.PopAsync(),
+                    ("closeContactEditor", _) => () => navPage.Navigation.PopAsync(),
                     _ => () => { }
                 };
                 // Middleware runs on background thread. Since we're creating and pushing new Xamarin.Forms ContentPages
@@ -88,7 +87,18 @@ namespace MyContacts
                 xf.Device.BeginInvokeOnMainThread(action);
                 return next(context);
             });
-
+            
+            // Show validation messages
+            _binder.UseMiddleware((context, next) =>
+            {
+                if (context.Signal is DisplayAlert a)
+                {
+                    xf.Device.BeginInvokeOnMainThread(() => { navPage.DisplayAlert(a.Title, a.Message, "OK"); });
+                    return context;
+                }
+                return next(context);
+            });
+            
             // Data retrieval and update
             _binder.UseMiddleware((context, next) =>
             {
@@ -109,10 +119,20 @@ namespace MyContacts
                         var success = string.IsNullOrEmpty(save.Contact.Id)
                             ? await svc.AddItem(save.Contact)
                             : await svc.UpdateItem(save.Contact);
-                        _binder.Send(success ? new DataRequested() : new Signal("SaveError", save.Payload));
+
+                        if (success)
+                        {
+                            _binder.Send(new Signal("closeContactEditor"));
+                            _binder.Send(new DataRequested());
+                        }
+                        else
+                        {
+                            // This signal is not used anywhere, it's here purely for demonstration purposes
+                            new Signal("SaveError", save.Payload);
+                        }
                     });
                 }
-                
+
                 return next(context);
             });
 

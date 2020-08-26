@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Laconic;
 using MyContacts.Shared.Models;
 
@@ -26,8 +27,8 @@ namespace MyContacts.Laconic
                         new Image
                         {
                             Source = new FontImageSource {
-                                FontFamily = IconFont.Name, 
-                                Glyph = row.IconGlyph, 
+                                FontFamily = IconFont.Name,
+                                Glyph = row.IconGlyph,
                                 Color = visuals.Colors.SystemGray2
                             },
                             HeightRequest = 36,
@@ -54,12 +55,12 @@ namespace MyContacts.Laconic
             return grid;
         }
 
-        public static VisualElement<Xamarin.Forms.ContentPage> Page(Visuals visuals, Contact initial) => Element.WithContext(ctx => {
-            var (state, setter) = ctx.UseLocalState(initial);
-            
+        public static VisualElement<Xamarin.Forms.ContentPage> Page(Visuals visuals, Contact initial) => Element.WithContext( ctx => {
+            var (contact, setter) = ctx.UseLocalState(initial);
+
             return new ContentPage
             {
-                Title = String.IsNullOrEmpty(state.Id) ? "New Contact" : "Edit Contact",
+                Title = String.IsNullOrEmpty(contact.Id) ? "New Contact" : "Edit Contact",
                 BackgroundColor = visuals.Colors.WindowBackgroundColor,
                 ToolbarItems =
                 {
@@ -68,32 +69,48 @@ namespace MyContacts.Laconic
                         IconImageSource = new FontImageSource
                         {
                             FontFamily = IconFont.Name,
-                            Glyph = "\uf193", 
-                            Color = Color.White   
+                            Glyph = "\uf193",
+                            Color = Color.White
                         },
-                        Clicked = () => new SaveContact(state)
+                        Clicked = () => Proceed(contact)
                     }
                 },
-                Content = new ScrollView {Content = new StackLayout
+                Content = new ScrollView { Content = new StackLayout 
                 {
                     Padding = 12,
                     ["name"] = Section(visuals, "Name",
-                        (state.FirstName, text => setter(state.With(firstName: text)), "\uf004", "First name"),
-                        (state.LastName, text => setter(state.With(lastName: text)), null, "Last name")
+                        (contact.FirstName, text => setter(contact.With(firstName: text)), "\uf004", "First name"),
+                        (contact.LastName, text => setter(contact.With(lastName: text)), null, "Last name")
                     ),
                     ["employment"] = Section(visuals, "Employment",
-                        (state.Company, text => setter(state.With(company: text)), "\uf990", "Company"),
-                        (state.JobTitle, text => setter(state.With(jobTitle: text)), null, "Title")),
+                        (contact.Company, text => setter(contact.With(company: text)), "\uf990", "Company"),
+                        (contact.JobTitle, text => setter(contact.With(jobTitle: text)), null, "Title")),
                     ["contact"] = Section(visuals, "Contact",
-                        (state.Phone, text => setter(state.With(phone: text)), "\uf3f2", "Phone number"),
-                        (state.Email, text => setter(state.With(email: text)), "\uf1ee", "Email address")),
+                        (contact.Phone, text => setter(contact.With(phone: text)), "\uf3f2", "Phone number"),
+                        (contact.Email, text => setter(contact.With(email: text)), "\uf1ee", "Email address")),
                     ["address"] = Section(visuals, "Address",
-                        (state.Street, text => setter(state.With(street: text)), "\uf34d", "Street"),
-                        (state.City, text => setter(state.With(city: text)), null, "City"),
-                        (state.State, text => setter(state.With(state: text)), null, "State"),
-                        (state.PostalCode, text => setter(state.With(postalCode: text)), null, "Zip code")),
+                        (contact.Street, text => setter(contact.With(street: text)), "\uf34d", "Street"),
+                        (contact.City, text => setter(contact.With(city: text)), null, "City"),
+                        (contact.State, text => setter(contact.With(state: text)), null, "State"),
+                        (contact.PostalCode, text => setter(contact.With(postalCode: text)), null, "Zip code")),
                 }}
             };
         });
+
+        static Signal Proceed(Contact contact)
+        {
+            if (new [] {contact.LastName, contact.FirstName}.Any(x => string.IsNullOrEmpty(x.Trim())))
+                return new DisplayAlert("Invalid name!", "A Contact must have both a first and last name.");
+
+            var validAddress = new[] {contact.Street, contact.City, contact.State}.All(x => !string.IsNullOrEmpty(x.Trim()))
+                || !string.IsNullOrEmpty(contact.PostalCode);
+
+            if (!validAddress)
+                return new DisplayAlert(
+                    "Invalid address!",
+                    "You must enter either a street, city, and state combination, or a postal code.");
+
+            return new SaveContact(contact);
+        }
     }
 }
