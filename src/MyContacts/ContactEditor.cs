@@ -5,7 +5,7 @@ using MyContacts.Shared.Models;
 
 namespace MyContacts.Laconic
 {
-    public static class ContactEditor
+    static class ContactEditor
     {
         static Grid Section(Visuals visuals, string sectionName,
             params (string Text, Func<string, Signal> Update, string IconGlyph, string Placeholder)[] rows)
@@ -55,8 +55,9 @@ namespace MyContacts.Laconic
             return grid;
         }
 
-        public static VisualElement<Xamarin.Forms.ContentPage> Page(Visuals visuals, Contact initial) => Element.WithContext( ctx => {
-            var (contact, setter) = ctx.UseLocalState(initial);
+        public static VisualElement<Xamarin.Forms.ContentPage> Page(Contact initial, Visuals visuals) => Element.WithContext( ctx => {
+            
+            var (contact, update) = ctx.UseLocalState(initial);
 
             return new ContentPage
             {
@@ -79,20 +80,20 @@ namespace MyContacts.Laconic
                 {
                     Padding = 12,
                     ["name"] = Section(visuals, "Name",
-                        (contact.FirstName, text => setter(contact.With(firstName: text)), "\uf004", "First name"),
-                        (contact.LastName, text => setter(contact.With(lastName: text)), null, "Last name")
+                        (contact.FirstName, text => update(contact.With(firstName: text)), "\uf004", "First name"),
+                        (contact.LastName, text => update(contact.With(lastName: text)), null, "Last name")
                     ),
                     ["employment"] = Section(visuals, "Employment",
-                        (contact.Company, text => setter(contact.With(company: text)), "\uf990", "Company"),
-                        (contact.JobTitle, text => setter(contact.With(jobTitle: text)), null, "Title")),
+                        (contact.Company, text => update(contact.With(company: text)), "\uf990", "Company"),
+                        (contact.JobTitle, text => update(contact.With(jobTitle: text)), null, "Title")),
                     ["contact"] = Section(visuals, "Contact",
-                        (contact.Phone, text => setter(contact.With(phone: text)), "\uf3f2", "Phone number"),
-                        (contact.Email, text => setter(contact.With(email: text)), "\uf1ee", "Email address")),
+                        (contact.Phone, text => update(contact.With(phone: text)), "\uf3f2", "Phone number"),
+                        (contact.Email, text => update(contact.With(email: text)), "\uf1ee", "Email address")),
                     ["address"] = Section(visuals, "Address",
-                        (contact.Street, text => setter(contact.With(street: text)), "\uf34d", "Street"),
-                        (contact.City, text => setter(contact.With(city: text)), null, "City"),
-                        (contact.State, text => setter(contact.With(state: text)), null, "State"),
-                        (contact.PostalCode, text => setter(contact.With(postalCode: text)), null, "Zip code")),
+                        (contact.Street, text => update(contact.With(street: text)), "\uf34d", "Street"),
+                        (contact.City, text => update(contact.With(city: text)), null, "City"),
+                        (contact.State, text => update(contact.With(state: text)), null, "State"),
+                        (contact.PostalCode, text => update(contact.With(postalCode: text)), null, "Zip code")),
                 }}
             };
         });

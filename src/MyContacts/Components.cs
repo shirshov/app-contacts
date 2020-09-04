@@ -83,8 +83,6 @@ namespace MyContacts.Laconic
 
     static class IconFont
     {
-        public static string Name { get; } = Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS
-            ? "Material Design Icons"
-            : "materialdesignicons-webfont.ttf#Material Design Icons";
+        public static string Name;
     }
  }

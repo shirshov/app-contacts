@@ -1,8 +1,5 @@
-﻿using System;
-using Android.Content.Res;
-using Android.OS;
+﻿using Android.OS;
 using MyContacts.Interfaces;
-using MyContacts.Models;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 

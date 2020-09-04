@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using MyContacts.Models;
 
 namespace MyContacts.Interfaces
 {

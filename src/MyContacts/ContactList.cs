@@ -1,11 +1,10 @@
 ﻿using MyContacts.Shared.Models;
 using Laconic;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MyContacts.Laconic
 {
-    public static class ContactList
+    static class ContactList
     {
         static Frame ContactCard(Contact contact, Visuals visuals) => new StyledFrame(visuals.Colors)
         {
@@ -16,7 +15,7 @@ namespace MyContacts.Laconic
             BorderColor = visuals.Colors.FrameBorderColor,
             GestureRecognizers = {["tap"] = new TapGestureRecognizer
             {
-                Tapped = () => new Signal("showDetails", contact)
+                Tapped = () => new ShowDetails(contact)
             }},
             Content = new Grid
             {
@@ -49,8 +48,6 @@ namespace MyContacts.Laconic
 
         static CollectionView List(IEnumerable<Contact> contacts, Visuals visuals)
         {
-            System.Diagnostics.Debug.WriteLine($"LIST: {contacts.Count()}");
-            
             return new CollectionView
             {
                 ItemSizingStrategy = ItemSizingStrategy.MeasureFirstItem,
@@ -86,7 +83,7 @@ namespace MyContacts.Laconic
             Content = new ImageButton
             {
                 Padding = 12,
-                Clicked = () => new Signal("showAddContact"),
+                Clicked = () => new ShowAddContact(),
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 BackgroundColor = colors.PrimaryColor,
                 VerticalOptions = LayoutOptions.FillAndExpand,
@@ -102,7 +99,7 @@ namespace MyContacts.Laconic
             {
                 ["settings"] = new ToolbarItem
                 {
-                    Clicked = () => new Signal("showSettings"),
+                    Clicked = () => new ShowSettings(),
                     IconImageSource = new FontImageSource { FontFamily = IconFont.Name, Glyph = "\uF493", Color = Color.White}
                 }
             },
@@ -115,7 +112,7 @@ namespace MyContacts.Laconic
                     IsRefreshing = state.IsFetchingData,
                     Refreshing = e => e.IsRefreshing ? new DataRequested() : null,
                     Content = List(state.Contacts, state.Visuals),
-                    RefreshColor = state.Visuals.Colors.SystemGray
+                    RefreshColor = state.Visuals.Colors.RefreshViewBackgroundColor
                 },
                 ["fab", rowSpan: 2] = FloatingButton(state.Visuals.Colors)
             }

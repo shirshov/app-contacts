@@ -129,8 +129,6 @@
     <Compile Include="Helpers\Environment.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
-    <Compile Include="Renderers\DefaultPageRenderer.cs" />
-    <Compile Include="Renderers\StandardViewCellRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

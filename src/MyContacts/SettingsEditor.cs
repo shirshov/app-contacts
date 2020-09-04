@@ -1,20 +1,17 @@
-using MyContacts.Models;
+using System;
+using System.Linq;
 using Laconic;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using ScrollView = Laconic.ScrollView;
-using Picker = Laconic.Picker;
 
 namespace MyContacts.Laconic
 {
-    public static class SettingsEditor
+    static class SettingsEditor
     {
         static BoxView ColorRow(Color color) => new BoxView
         {
             BackgroundColor = color, HeightRequest = 20, HorizontalOptions = LayoutOptions.FillAndExpand
         };
 
-        static Grid MainContent(Visuals visuals) => new Grid
+        static Grid MainContent(Visuals visuals, SelectedTheme[] availableThemes, SelectedTheme selectedTheme, bool isDarkTheme) => new Grid
         {
             RowDefinitions = "Auto, *",
             ColumnDefinitions = "*, Auto",
@@ -29,11 +26,11 @@ namespace MyContacts.Laconic
             {
                 Text = "Close",
                 Margin = 10,
-                Clicked = () => new Signal("closeSettings"),
+                Clicked = () => new CloseSettings(),
                 BackgroundColor = visuals.Colors.FrameBackgroundColor,
                 FontSize = 12,
                 BorderColor = visuals.Colors.FrameBorderColor,
-                BorderWidth = visuals.SelectedTheme == Theme.Dark ? 2 : 0,
+                BorderWidth = isDarkTheme ? 2 : 0,
                 CornerRadius = 20,
                 HeightRequest = 40,
                 Visual = VisualMarker.Material,
@@ -57,9 +54,9 @@ namespace MyContacts.Laconic
                             ["lbl"] = new MediumLabel(visuals) {Text = "Theme"},
                             ["picker"] = new Picker
                             {
-                                Items = visuals.Themes,
-                                SelectedIndex = (int) visuals.SelectedTheme,
-                                SelectedIndexChanged = e => new SetTheme((Theme) e.SelectedIndex),
+                                Items = availableThemes.Select(x => x.ToString()).ToArray(),
+                                SelectedIndex = Array.IndexOf(availableThemes, selectedTheme),
+                                SelectedIndexChanged = e => new SetTheme(availableThemes[e.SelectedIndex]),
                                 Visual = VisualMarker.Material,
                                 BackgroundColor = visuals.Colors.EntryBackgroundColor,
                                 TextColor = visuals.Colors.SystemGray
@@ -79,15 +76,10 @@ namespace MyContacts.Laconic
             }
         };
 
-        public static VisualElement<Xamarin.Forms.ContentPage> Page(Visuals visuals) => Element.WithContext(ctx =>
+        public static ContentPage Page(State state) => new ContentPage 
         {
-            var page = new ContentPage
-            {
-                BackgroundColor = visuals.Colors.WindowBackgroundColor, Content = MainContent(visuals)
-            };
-            ctx.ViewCreated = p => 
-                ((Xamarin.Forms.ContentPage)p).On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
-            return page;
-        });
+            BackgroundColor = state.Visuals.Colors.WindowBackgroundColor, 
+            Content = MainContent(state.Visuals, state.AvailableThemes, state.SelectedTheme, state.IsDarkTheme)
+        };
     }
 }

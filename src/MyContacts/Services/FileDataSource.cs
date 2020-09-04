@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using MyContacts.Interfaces;
 using MyContacts.Shared.Models;
 using MyContacts.Shared.Utils;
-using MyContacts.Util;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
 
@@ -83,7 +82,7 @@ namespace MyContacts.Services
         {
             var contents = JsonConvert.SerializeObject(myContacts);
             File.WriteAllText(fullPath, contents);
-            Settings.LastUpdate = DateTime.UtcNow;
+            // Settings.LastUpdate = DateTime.UtcNow;
         }
 
 		#endregion

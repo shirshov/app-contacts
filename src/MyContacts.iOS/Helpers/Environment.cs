@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using MyContacts.Interfaces;
-using MyContacts.Models;
-using UIKit;
+﻿using MyContacts.Interfaces;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(MyContacts.iOS.Helpers.Environment))]

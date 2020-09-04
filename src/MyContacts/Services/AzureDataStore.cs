@@ -7,11 +7,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MyContacts.Extensions;
 using MyContacts.Interfaces;
 using MyContacts.Shared.Models;
-using MyContacts.Util;
-using MyContacts.Utils;
 using Xamarin.Essentials;
 
 namespace MyContacts.Services
@@ -38,7 +35,7 @@ namespace MyContacts.Services
         public async Task<IEnumerable<Contact>> GetItems()
         {
 
-            Settings.LastUpdate = DateTime.UtcNow;
+            // Settings.LastUpdate = DateTime.UtcNow;
 
 #if LOCALWRITES
             if (contacts.Any())
@@ -51,7 +48,7 @@ namespace MyContacts.Services
             }
             else
             {
-                await OfflineAlert();
+                // await OfflineAlert();
             }
 
 
@@ -61,7 +58,7 @@ namespace MyContacts.Services
         public async Task<Contact> GetItem(string id)
         {
 
-            Settings.LastUpdate = DateTime.UtcNow;
+            // Settings.LastUpdate = DateTime.UtcNow;
 
 #if LOCALWRITES
             var c = contacts.FirstOrDefault(c => c.Id == id);
@@ -71,7 +68,7 @@ namespace MyContacts.Services
 
             if (!IsConnected)
             {
-                await OfflineAlert();
+                // await OfflineAlert();
                 return null;
             }
 
@@ -90,26 +87,26 @@ namespace MyContacts.Services
             if (contact == null)
                 return false;
 
-            Settings.LastUpdate = DateTime.UtcNow;
+            // Settings.LastUpdate = DateTime.UtcNow;
 
             var serializedContact = JsonSerializer.Serialize(contact);
 
 #if LOCALWRITES
             contacts.Add(contact.With(id: Guid.NewGuid().ToString()));
 
-            await Dialogs.Alert(new AlertInfo
-            {
-                Cancel = "OK",
-                Title = "Local Only Mode",
-                Message = "Currently running in local write mode. Data will not be sent to the server."
-            });
+            // await Dialogs.Alert(new AlertInfo
+            // {
+            //     Cancel = "OK",
+            //     Title = "Local Only Mode",
+            //     Message = "Currently running in local write mode. Data will not be sent to the server."
+            // });
 
             return true;
 #endif
 
             if (!IsConnected)
             {
-                await OfflineAlert();
+                // await OfflineAlert();
                 return false;
             }
 
@@ -130,7 +127,7 @@ namespace MyContacts.Services
             if (contact == null || contact.Id == null)
                 return false;
 
-            Settings.LastUpdate = DateTime.UtcNow;
+            // Settings.LastUpdate = DateTime.UtcNow;
 
 #if LOCALWRITES
 
@@ -138,14 +135,14 @@ namespace MyContacts.Services
             if (existing == null)
                 return false;
 
-            await LocalOnlyModeAlert();
+            // await LocalOnlyModeAlert();
 
             return true;
 #endif
 
             if(!IsConnected)
             {
-                await OfflineAlert();
+                // await OfflineAlert();
                 return false;
             }
 
@@ -165,18 +162,18 @@ namespace MyContacts.Services
             if (string.IsNullOrEmpty(id) && !IsConnected)
                 return false;
 
-            Settings.LastUpdate = DateTime.UtcNow;
+            // Settings.LastUpdate = DateTime.UtcNow;
 
 #if LOCALWRITES
 
             contacts.Add(contact);
 
-            await Dialogs.Alert(new AlertInfo
-            {
-                Cancel = "OK",
-                Title = "Local Only Mode",
-                Message = "Currently running in local write mode. Data will not be sent to the server."
-            });
+            // await Dialogs.Alert(new AlertInfo
+            // {
+            //     Cancel = "OK",
+            //     Title = "Local Only Mode",
+            //     Message = "Currently running in local write mode. Data will not be sent to the server."
+            // });
 
             return true;
 #endif
@@ -187,19 +184,19 @@ namespace MyContacts.Services
             return response.IsSuccessStatusCode;
         }  
         
-        Task LocalOnlyModeAlert() => Dialogs.Alert(new AlertInfo
-        {
-            Cancel = "OK",
-            Title = "Local Only Mode",
-            Message = "Currently running in local write mode. Data will not be sent to the server."
-        });
-
-        Task OfflineAlert() => Dialogs.Alert(new AlertInfo
-        {
-            Cancel = "OK",
-            Title = "Offline",
-            Message = "Currently offline, please check internet connection."
-        });
+        // Task LocalOnlyModeAlert() => Dialogs.Alert(new AlertInfo
+        // {
+        //     Cancel = "OK",
+        //     Title = "Local Only Mode",
+        //     Message = "Currently running in local write mode. Data will not be sent to the server."
+        // });
+        //
+        // Task OfflineAlert() => Dialogs.Alert(new AlertInfo
+        // {
+        //     Cancel = "OK",
+        //     Title = "Offline",
+        //     Message = "Currently offline, please check internet connection."
+        // });
 
     }
 }
