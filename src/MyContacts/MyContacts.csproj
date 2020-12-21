@@ -16,8 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\laconic\maps\src\Laconic.Maps.csproj" />
-    <ProjectReference Include="..\..\laconic\src\Laconic.csproj" />
     <ProjectReference Include="..\MyContacts.Shared\MyContacts.Shared.csproj" />
   </ItemGroup>
 
