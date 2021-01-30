@@ -52,10 +52,7 @@ namespace MyContacts
                 ? "Material Design Icons"
                 : "materialdesignicons-webfont.ttf#Material Design Icons";
             
-            if (UseLocalDataSource)
-                xf.DependencyService.Register<FileDataSource>();
-            else
-                xf.DependencyService.Register<AzureDataStore>();
+            xf.DependencyService.Register<FileDataSource>();
 
             var deviceTheme = AppInfo.RequestedTheme;
             var selectedTheme = (SelectedTheme)Enum.Parse(
@@ -81,7 +78,7 @@ namespace MyContacts
             // Navigation
             _binder.UseMiddleware((context, next) =>
             {
-                if (!(context.Signal is Navigation nav))
+                if (!(context.Signal is INavigationSignal nav))
                     return next(context);
                 
                 Action action = nav switch
@@ -99,12 +96,12 @@ namespace MyContacts
                     ShowDetails d => () =>
                     {
                         // Must use current state instead of captured 'c' variable:
-                        var p = _binder.CreateElement(s => ContactDetails.Page(s.Contacts.First(x => x.Id == d.Contact.Id), s.Visuals));
+                        var p = _binder.CreateElement(s => ContactDetails.Page(s.Contacts.First(x => x.Id == d.Payload.Id), s.Visuals));
                         xf.NavigationPage.SetBackButtonTitle(p, "");
                         navPage.Navigation.PushAsync(p);
                     },
                     ShowContactEditor e => () =>
-                        navPage.Navigation.PushAsync(_binder.CreateElement(s => ContactEditor.Page(e.Contact, s.Visuals))),
+                        navPage.Navigation.PushAsync(_binder.CreateElement(s => ContactEditor.Page(e.Payload, s.Visuals))),
                     CloseContactEditor _ => () => navPage.Navigation.PopAsync(),
                     _ => () => { }
                 };
@@ -118,7 +115,7 @@ namespace MyContacts
             _binder.UseMiddleware((context, next) =>
             {
                 if (context.Signal is SetTheme t)
-                    Preferences.Set(nameof(SelectedTheme), t.Theme.ToString());
+                    Preferences.Set(nameof(SelectedTheme), t.Payload.ToString());
                 
                 return next(context);
             });
@@ -149,9 +146,9 @@ namespace MyContacts
                 {
                     Task.Run(async () =>
                     {
-                        var success = string.IsNullOrEmpty(save.Contact.Id)
-                            ? await svc.AddItem(save.Contact)
-                            : await svc.UpdateItem(save.Contact);
+                        var success = string.IsNullOrEmpty(save.Payload.Id)
+                            ? await svc.AddItem(save.Payload)
+                            : await svc.UpdateItem(save.Payload);
 
                         if (success)
                         {
@@ -180,7 +177,7 @@ namespace MyContacts
             MiddlewareContext<State> context, 
             Func<MiddlewareContext<State>, MiddlewareContext<State>> next)
         {
-            if (!(context.Signal is ExternalAppRequestSignal ext))
+            if (!(context.Signal is IExternalAppRequestSignal ext))
                 return next(context);
             
             static string Sanitize(string source) => new string(source.ToCharArray().Where(char.IsDigit).ToArray());
@@ -196,23 +193,23 @@ namespace MyContacts
                             errorMessage = "Unable to open a map application on the device.";
                             await Map.OpenAsync(new Placemark
                             {
-                                AdminArea = d.Contact.State,
-                                Locality = d.Contact.City,
-                                PostalCode = d.Contact.PostalCode,
-                                Thoroughfare = d.Contact.AddressString
+                                AdminArea = d.Payload.State,
+                                Locality = d.Payload.City,
+                                PostalCode = d.Payload.PostalCode,
+                                Thoroughfare = d.Payload.AddressString
                             });
                             break;
                         case SendTextMessage m:
                             errorMessage = "Sms is not supported on this device.";
-                            await Sms.ComposeAsync(new SmsMessage(string.Empty, Sanitize(m.Number)));
+                            await Sms.ComposeAsync(new SmsMessage(string.Empty, Sanitize(m.Payload)));
                             break;
                         case DialNumber d:
                             errorMessage = "Phone calls are not supported on this device.";
-                            PhoneDialer.Open(Sanitize(d.Number));
+                            PhoneDialer.Open(Sanitize(d.Payload));
                             break;
                         case SendEmail e:
                             errorMessage = "Email is not supported on this device.";
-                            await Email.ComposeAsync(string.Empty, string.Empty, e.EmailAddress);
+                            await Email.ComposeAsync(string.Empty, string.Empty, e.Payload);
                             break;
                     }
                 }

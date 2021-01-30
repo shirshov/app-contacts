@@ -43,7 +43,7 @@ namespace MyContacts.Services
 
 		public Task<bool> AddItem(Contact item)
 		{
-			myContacts.Add(item.With(id: Guid.NewGuid().ToString()));
+			myContacts.Add(item with {Id = Guid.NewGuid().ToString() });
 
             WriteFile();
 

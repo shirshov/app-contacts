@@ -1,46 +1,54 @@
 using System.Collections.Generic;
 using System.Linq;
 using Laconic;
-using Laconic.CodeGeneration;
 using MyContacts.Shared.Models;
 using Xamarin.Essentials;
 
 namespace MyContacts.Laconic
 {
-    [Signals]
-    interface __AppContactsSignal
+    //  Data
+    class DataRequested : Signal { public DataRequested() : base(null) { } }
+    class DataReceived : Signal<IEnumerable<Contact>> { public DataReceived(IEnumerable<Contact> contacts) : base(contacts) { } }
+    class SaveContact : Signal<Contact> { public SaveContact(Contact contact) : base(contact) { } }
+    class DeleteContact : Signal<Contact> { public DeleteContact(Contact contact) : base(contact) { } }
+
+    class DisplayAlert : Signal
     {
-        Signal DataRequested();
-        Signal DataReceived(IEnumerable<Contact> contacts);
-        Signal SaveContact(Contact contact);
-        Signal DeleteContact(Contact contact);
-        
-        Signal DisplayAlert(string title, string message);
-        
-        Signal SetTheme(SelectedTheme theme);
-        Signal DeviceSettingsChanged(AppTheme deviceTheme, NamedSizes namedSizes);
+        public DisplayAlert(string title, string message) : base(title, message)
+        {
+            Title = title;
+            Message = message;
+        }
+
+        public string Title { get; }
+        public string Message { get; }
     }
 
-    [Signals]
-    interface __Navigation
+    class SetTheme : Signal<SelectedTheme> { public SetTheme(SelectedTheme theme) : base(theme) { } }
+
+    class DeviceSettingsChanged : Signal
     {
-        Signal ShowSettings();
-        Signal CloseSettings();
-        Signal ShowContactEditor(Contact contact);
-        Signal ShowAddContact();
-        Signal CloseContactEditor();
-        Signal ShowDetails(Contact contact);
+        public DeviceSettingsChanged(AppTheme deviceTheme, NamedSizes namedSizes) : base(deviceTheme, namedSizes) { }
     }
 
-    [Signals]
-    interface __ExternalAppRequestSignal
-    {
-        Signal DialNumber(string number);
-        Signal SendTextMessage(string number);
-        Signal SendEmail(string emailAddress);
-        Signal ShowDirections(Contact contact);
-    }
-    
+    // Navigation
+    interface INavigationSignal { }
+
+    class ShowSettings : Signal, INavigationSignal { public ShowSettings() : base(null) { } }
+    class CloseSettings : Signal, INavigationSignal { public CloseSettings() : base(null) { } }
+    class   ShowContactEditor : Signal<Contact>, INavigationSignal { public ShowContactEditor(Contact contact) : base(contact) { } }
+    class ShowAddContact : Signal, INavigationSignal { public ShowAddContact() : base(null) { } }
+    class CloseContactEditor : Signal, INavigationSignal { public CloseContactEditor() : base(null) { } }
+    class ShowDetails : Signal<Contact>, INavigationSignal { public ShowDetails(Contact contact) : base(contact) { } }
+
+    // external apps
+    interface IExternalAppRequestSignal { }
+
+    class DialNumber : Signal<string>, IExternalAppRequestSignal { public DialNumber(string number) : base(number) { } }
+    class SendTextMessage : Signal<string>, IExternalAppRequestSignal { public SendTextMessage(string number) : base(number) { } }
+    class SendEmail : Signal<string>, IExternalAppRequestSignal { public SendEmail(string emailAddress) : base(emailAddress) { } }
+    class ShowDirections : Signal<Contact>, IExternalAppRequestSignal {public ShowDirections(Contact contact) : base(contact) {} }
+
     public class Colors
     {
         public readonly Color PrimaryColor;
@@ -50,11 +58,11 @@ namespace MyContacts.Laconic
         public readonly Color FrameBackgroundColor;
         public readonly Color FrameBorderColor;
         public readonly Color RefreshViewBackgroundColor;
-        
+
         public readonly Color SystemGray;
         public readonly Color SystemGray2;
         public readonly Color SystemGray4;
-        
+
         public readonly Color SystemBlue;
         public readonly Color SystemGreen;
         public readonly Color SystemIndigo;
@@ -74,7 +82,7 @@ namespace MyContacts.Laconic
             FrameBackgroundColor = isDark ? "1E2222" : Color.White;
             FrameBorderColor = isDark ? "5A5C60" : Color.Default;
             RefreshViewBackgroundColor = isDark ? Color.White : Color.Black;
-            
+
             SystemGray = isDark ? "8E8E93" : "8E8E93";
             SystemGray2 = isDark ? "636366" : "AEAEB2";
             SystemGray4 = isDark ? "3A3A3C" : "D1D1D6";
@@ -91,42 +99,40 @@ namespace MyContacts.Laconic
         }
     }
 
-    [Records]
-    interface Records
-    {
-        record NamedSizes(double large, double medium, double small, double micro);
-        record Visuals(Colors colors,  NamedSizes sizes);
-        record State(bool isFetchingData, 
-            Contact[] contacts, 
-            SelectedTheme[] availableThemes, 
-            AppTheme deviceTheme, 
-            SelectedTheme selectedTheme,
-            Visuals visuals);
-    }
+    record NamedSizes(double Large, double Medium, double Small, double Micro);
+    record Visuals(Colors Colors, NamedSizes Sizes);
+    partial record State(bool IsFetchingData,
+            Contact[] Contacts,
+            SelectedTheme[] AvailableThemes,
+            AppTheme DeviceTheme,
+            SelectedTheme SelectedTheme,
+            Visuals Visuals);
 
-    partial class State
+    partial record State
     {
         public bool IsDarkTheme => CalculateIsDarkTheme(DeviceTheme, SelectedTheme);
-        
-        public static State MainReducer(State state, Signal signal) => signal switch {
-            DataRequested _ => state.With(isFetchingData: true),
-            DataReceived rec => state.With(isFetchingData: false, contacts: rec.Contacts.ToArray()),
-            SetTheme t => state.With(
-                selectedTheme: t.Theme, 
-                visuals: state.Visuals.With(new Colors(CalculateIsDarkTheme(state.DeviceTheme, t.Theme)))),
-            DeviceSettingsChanged s => state.With(
-                deviceTheme: s.DeviceTheme, 
-                visuals: state.Visuals.With(
-                    colors: new Colors(CalculateIsDarkTheme(s.DeviceTheme, state.SelectedTheme)),
-                    sizes: s.NamedSizes)),
+
+        public static State MainReducer(State state, Signal signal) => signal switch
+        {
+            DataRequested => state with { IsFetchingData = true },
+            DataReceived dr => state with {IsFetchingData = false, Contacts = dr.Payload.ToArray() },
+            SetTheme t => state with {
+                SelectedTheme = t.Payload,
+                Visuals = state.Visuals with { Colors = new Colors(CalculateIsDarkTheme(state.DeviceTheme, t.Payload)) }},
+            //(Signals.DeviceSettingsChanged, (AppTheme DeviceTheme, NamedSizes NamedSizes) v) => state with {
+            //    DeviceTheme = deviceTheme },
+            //    Visuals = state.Visuals with {
+            //        Colors = new Colors(CalculateIsDarkTheme(v.DeviceTheme, state.SelectedTheme)),
+            //        sizes = v.NamedSizes 
+            //    }},
             _ => state,
         };
-        
-        static bool CalculateIsDarkTheme(AppTheme deviceTheme, SelectedTheme selectedTheme) => 
+
+        static bool CalculateIsDarkTheme(AppTheme deviceTheme, SelectedTheme selectedTheme) =>
             selectedTheme == SelectedTheme.Phone && deviceTheme == AppTheme.Dark
                               || selectedTheme == SelectedTheme.Dark;
 
-        public static State Initial(NamedSizes namedSizes, SelectedTheme[] availableThemes, 
+        public static State Initial(NamedSizes namedSizes, SelectedTheme[] availableThemes,
             AppTheme deviceTheme, SelectedTheme selectedTheme) => new State(false,
                 new Contact[0],
                  availableThemes,

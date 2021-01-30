@@ -80,20 +80,20 @@ namespace MyContacts.Laconic
                 {
                     Padding = 12,
                     ["name"] = Section(visuals, "Name",
-                        (contact.FirstName, text => update(contact.With(firstName: text)), "\uf004", "First name"),
-                        (contact.LastName, text => update(contact.With(lastName: text)), null, "Last name")
+                        (contact.FirstName, text => update(contact with { FirstName = text }), "\uf004", "First name"),
+                        (contact.LastName, text => update(contact with { LastName = text }), null, "Last name")
                     ),
                     ["employment"] = Section(visuals, "Employment",
-                        (contact.Company, text => update(contact.With(company: text)), "\uf990", "Company"),
-                        (contact.JobTitle, text => update(contact.With(jobTitle: text)), null, "Title")),
+                        (contact.Company, text => update(contact with {Company = text }), "\uf990", "Company"),
+                        (contact.JobTitle, text => update(contact with {JobTitle = text }), null, "Title")),
                     ["contact"] = Section(visuals, "Contact",
-                        (contact.Phone, text => update(contact.With(phone: text)), "\uf3f2", "Phone number"),
-                        (contact.Email, text => update(contact.With(email: text)), "\uf1ee", "Email address")),
+                        (contact.Phone, text => update(contact with {Phone = text }), "\uf3f2", "Phone number"),
+                        (contact.Email, text => update(contact with {Email = text }), "\uf1ee", "Email address")),
                     ["address"] = Section(visuals, "Address",
-                        (contact.Street, text => update(contact.With(street: text)), "\uf34d", "Street"),
-                        (contact.City, text => update(contact.With(city: text)), null, "City"),
-                        (contact.State, text => update(contact.With(state: text)), null, "State"),
-                        (contact.PostalCode, text => update(contact.With(postalCode: text)), null, "Zip code")),
+                        (contact.Street, text => update(contact with {Street = text }), "\uf34d", "Street"),
+                        (contact.City, text => update(contact with {City = text }), null, "City"),
+                        (contact.State, text => update(contact with {State = text }), null, "State"),
+                        (contact.PostalCode, text => update(contact with {PostalCode = text }), null, "Zip code")),
                 }}
             };
         });

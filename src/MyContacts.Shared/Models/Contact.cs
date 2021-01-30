@@ -1,33 +1,22 @@
 ﻿using System;
-using System.Text.Json.Serialization;
-using Laconic.CodeGeneration;
+using Newtonsoft.Json;
 
 namespace MyContacts.Shared.Models
 {
-    [Records]
-    public interface Records
-    {
-       record Contact(string id, string firstName, string lastName, 
-           string company, string jobTitle, 
-           string phone, string email,
-           string street, string city, string state, string postalCode,
-           string photoUrl);
-    }
+   public partial record Contact(string Id, string FirstName, string LastName, 
+	   string Company, string JobTitle, string Phone, string Email,
+   string Street, string City, string State, string PostalCode, string PhotoUrl);
 
-    partial class Contact
+    partial record Contact
     {
-        public static Contact New() => new Contact(null, "", "", "", "", "", "", "", "", "", "", "https://raw.githubusercontent.com/jamesmontemagno/app-monkeys/master/douc.jpg");
+        public static Contact New() => new(null, "", "", "", "", "", "", "", "", "", "", "https://raw.githubusercontent.com/jamesmontemagno/app-monkeys/master/douc.jpg");
 
         [JsonIgnore]
         public string SmallPhotoUrl => PhotoUrl;
         
         [JsonIgnore]
-        public string AddressString => string.Format(
-             "{0} {1} {2} {3}",
-             Street,
-             !string.IsNullOrWhiteSpace(City) ? City + "," : "",
-             State,
-             PostalCode);
+        public string AddressString =>
+            $"{Street} {(!string.IsNullOrWhiteSpace(City) ? City + "," : "")} {State} {PostalCode}";
          
         [JsonIgnore]
         public string DisplayName => ToString();
@@ -39,6 +28,14 @@ namespace MyContacts.Shared.Models
         public string StatePostal => State + " " + PostalCode;
         
         public override string ToString() => $"{FirstName} {LastName}";
+    }
+}
+
+// Without this dummy class C#9's records won't compile
+namespace System.Runtime.CompilerServices
+{
+    public static class IsExternalInit
+    {
     }
 }
 
